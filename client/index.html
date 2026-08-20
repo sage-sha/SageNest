@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>gerbils in a trenchcoat</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 720px;
+      margin: 3rem auto;
+      padding: 0 1rem;
+    }
+    h1 { font-weight: 600; }
+    .card {
+      border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 0.75rem 0;
+    }
+    .empty { opacity: 0.6; font-style: italic; }
+  </style>
+</head>
+<body>
+  <h1>gerbils in a trenchcoat</h1>
+  <p>whats live right now:</p>
+  <div id="status" class="empty">loading…</div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
