@@ -22,6 +22,6 @@ impl AppState {
     }
 
     pub fn swap(&self, next: Deployment) -> Option<Deployment> {
-        todo!()
+        self.deployment.lock().expect("state lock").replace(next)
     }
 }
