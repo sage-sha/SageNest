@@ -4,7 +4,7 @@ sagenest watches one repo, whatever is on master is the live site, when
 master updates the site updates, thats the whole thing. this repo is the
 skeleton, the core functions are empty on purpose, you are supposed to build them out and make everything pop. if somethign isnt working your way or you find a better way, change it and stick with it. this is just something to get you started, not something you have to stick with.
 
-    git push -> webhook -> sagenest server (rust)
+    git push -> webhook -> sagenest server (python)
                              clone master
                              docker build
                              new container swaps in for the old one
@@ -12,7 +12,7 @@ skeleton, the core functions are empty on purpose, you are supposed to build the
 
 ## the tools and how we use them
 
-- rust + axum, the server. gets the webhook and runs the whole
+- python + fastapi, the server. gets the webhook and runs the whole
   clone/build/deploy thing, most of the work is here
 - docker, the site runs in a container built from the repos own
   dockerfile, updating is basically swapping containers
@@ -25,7 +25,7 @@ skeleton, the core functions are empty on purpose, you are supposed to build the
 
 ## layout
 
-    server/ the rust server, pipeline lives here
+    server/ the python server, pipeline lives here
       fixtures/ canned github push payload
       scripts/ fake-push.sh
     client/ dashboard
@@ -35,7 +35,8 @@ skeleton, the core functions are empty on purpose, you are supposed to build the
 ## running
 
     docker compose up -d # traefik, once
-    cd server && cargo run # the server
+    cd server && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt # server deps, once
+    .venv/bin/uvicorn main:app --host 0.0.0.0 --port 3000 --reload # the server
     ./scripts/fake-push.sh # fake a github push (from server/)
     cd client && npm run dev # dashboard, optional at first
 
@@ -43,5 +44,5 @@ skeleton, the core functions are empty on purpose, you are supposed to build the
 
 # actual site url http://site.localhost/
 8080 # traefik dashboard
-3000 # rust server
+3000 # python server
 5173 # dashboard
