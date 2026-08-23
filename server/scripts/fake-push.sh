@@ -4,9 +4,9 @@ set -euo pipefail
 FIXTURE="$(dirname "$0")/../fixtures/push.json"
 ENV_FILE="$(dirname "$0")/../../.env"
 
-# load WEBHOOK_SECRET from .env
+# load WEBHOOK_SECRET from .env (strip CRLF in case it was edited on Windows)
 set -a
-source "$ENV_FILE"
+source <(tr -d '\r' < "$ENV_FILE")
 set +a
 
 BODY="$(cat "$FIXTURE")"

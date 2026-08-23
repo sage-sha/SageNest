@@ -2,6 +2,8 @@ from fastapi import FastAPI, Request, Response
 from pathlib import Path
 from dotenv import load_dotenv
 
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
 import api
 import webhook
 from state import AppState, Deployment
@@ -10,8 +12,6 @@ import hashlib
 import hmac
 import json
 import os
-
-load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 app = FastAPI()
 state = AppState()
