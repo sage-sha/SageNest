@@ -9,8 +9,8 @@ services:
       - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
     ports:
-      - "${TRAEFIK_WEB_BIND:-127.0.0.1:80:80}"
-      - "127.0.0.1:8080:8080"
+      - "80:80"
+      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
