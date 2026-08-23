@@ -26,11 +26,8 @@ case "${1:-}" in
   stop)
     docker compose down
     ;;
-  fake-push)
-    ./server/scripts/fake-push.sh
-    ;;
   *)
-    echo "usage: ./scripts/dev.sh start | stop | frontend | backend | traefik | fake-push"
+    echo "usage: ./scripts/dev.sh start | stop | frontend | backend | traefik"
     exit 1
     ;;
 esac
