@@ -1,7 +1,9 @@
+import os
+
 import docker
 
 NETWORK = "sagenest"
-HOST = "site.localhost"
+HOST = os.getenv("SITE_HOST", "site.localhost")
 ROUTER = "sagenest-site"
 
 def start(image_tag: str) -> str:
