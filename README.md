@@ -50,13 +50,11 @@ skeleton, the core functions are empty on purpose, you are supposed to build the
 ## putting it on a real domain
 
 the server needs a box with docker on it that github can reach, so a
-cheap vps (hetzner, digitalocean, whatever), not a static host. the
-sites live on subdomains, not a path, because the site is whatever
-dockerfile lands on main and apps dont like being served from /something.
+cheap vps (hetzner, digitalocean, whatever), not a static host. one
+domain does everything, traefik sends /webhook and /api to the server
+and everything else to the site container.
 
-1. dns, two A records pointing at the vps ip:
-   sagenest.gorb.technology (dashboard + webhook)
-   *.sagenest.gorb.technology (the site, site.sagenest.gorb.technology)
+1. dns, an A record for sagenest.gorb.technology pointing at the vps ip
 2. on the vps: install docker, open 22/80/443, clone this repo
 3. cp .env.example .env and fill it in. ACME_EMAIL is for lets encrypt,
    WEBHOOK_SECRET is whatever you paste into github

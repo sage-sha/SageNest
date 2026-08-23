@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Request, Response
-from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -12,8 +11,7 @@ import hmac
 import json
 import os
 
-ROOT = Path(__file__).resolve().parent.parent
-load_dotenv(ROOT / ".env")
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 app = FastAPI()
 state = AppState()
@@ -44,8 +42,3 @@ async def handle(request: Request) -> Response:
 @app.get("/api/status")
 def status() -> Deployment | None:
     return api.status(state)
-
-
-DIST = ROOT / "client" / "dist"
-if DIST.is_dir():
-    app.mount("/", StaticFiles(directory=DIST, html=True))

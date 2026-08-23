@@ -22,9 +22,7 @@ services:
       - sagenest
 
   server:
-    build:
-      context: .
-      dockerfile: server/Dockerfile
+    build: ./server
     container_name: sagenest-server
     restart: unless-stopped
     env_file: .env
@@ -36,7 +34,7 @@ services:
       - sagenest
     labels:
       traefik.enable: "true"
-      traefik.http.routers.sagenest.rule: Host(`${SAGENEST_HOST}`)
+      traefik.http.routers.sagenest.rule: Host(`${SITE_HOST}`) && (Path(`/webhook`) || PathPrefix(`/api`))
       traefik.http.routers.sagenest.entrypoints: websecure
       traefik.http.routers.sagenest.tls.certresolver: letsencrypt
       traefik.http.services.sagenest.loadbalancer.server.port: "3000"
