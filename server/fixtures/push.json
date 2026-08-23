@@ -3,9 +3,9 @@
   "before": "f4c3b00c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a",
   "after": "0ddba11deadbeef1234567890abcdef123456789",
   "repository": {
-    "name": "example-site",
-    "full_name": "YOUR-GITHUB-USERNAME/example-site",
-    "clone_url": "https://github.com/YOUR-GITHUB-USERNAME/example-site.git",
+    "name": "SageNest",
+    "full_name": "sage-sha/SageNest",
+    "clone_url": "https://github.com/sage-sha/SageNest.git",
     "default_branch": "main"
   },
   "pusher": { "name": "octocat" }

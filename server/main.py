@@ -1,8 +1,17 @@
 from fastapi import FastAPI, Request, Response
+from pathlib import Path
+from dotenv import load_dotenv
 
 import api
 import webhook
 from state import AppState, Deployment
+
+import hashlib
+import hmac
+import json
+import os
+
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 app = FastAPI()
 state = AppState()
@@ -15,7 +24,19 @@ def health() -> Response:
 
 @app.post("/webhook")
 async def handle(request: Request) -> Response:
-    return Response(status_code=await webhook.handle(state, await request.json()))
+    body = await request.body()
+    secret = os.getenv("WEBHOOK_SECRET", "")
+
+    if secret:
+        signature = request.headers.get("X-Hub-Signature-256", "")
+        expected = "sha256=" + hmac.new(
+            secret.encode(), body, hashlib.sha256
+        ).hexdigest()
+        if not hmac.compare_digest(signature, expected):
+            return Response(status_code=401)
+
+    payload = json.loads(body)
+    return Response(status_code=await webhook.handle(state, payload))
 
 
 @app.get("/api/status")
