@@ -1,0 +1,49 @@
+services:
+  traefik:
+    image: traefik:v3
+    container_name: sagenest-traefik
+    restart: unless-stopped
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    networks:
+      - sagenest
+
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: sagenest-server
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      HTTPS: "1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - sagenest
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.sagenest.rule: Host(`${SAGENEST_HOST}`)
+      traefik.http.routers.sagenest.entrypoints: websecure
+      traefik.http.routers.sagenest.tls.certresolver: letsencrypt
+      traefik.http.services.sagenest.loadbalancer.server.port: "3000"
+
+volumes:
+  letsencrypt:
+
+networks:
+  sagenest:
+    name: sagenest

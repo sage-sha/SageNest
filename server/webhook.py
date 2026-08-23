@@ -25,7 +25,7 @@ async def handle(state: AppState, payload: dict) -> int:
             branch=branch,
             image_tag=image_tag,
             container_id=container_id,
-            url="http://site.localhost/",
+            url=runner.site_url(),
         )
         prev = state.swap(next)
         if prev is not None:

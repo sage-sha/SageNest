@@ -46,3 +46,27 @@ skeleton, the core functions are empty on purpose, you are supposed to build the
 8080 # traefik dashboard
 3000 # python server
 5173 # dashboard
+
+## putting it on a real domain
+
+the server needs a box with docker on it that github can reach, so a
+cheap vps (hetzner, digitalocean, whatever), not a static host. the
+sites live on subdomains, not a path, because the site is whatever
+dockerfile lands on main and apps dont like being served from /something.
+
+1. dns, two A records pointing at the vps ip:
+   sagenest.gorb.technology (dashboard + webhook)
+   *.sagenest.gorb.technology (the site, site.sagenest.gorb.technology)
+2. on the vps: install docker, open 22/80/443, clone this repo
+3. cp .env.example .env and fill it in. ACME_EMAIL is for lets encrypt,
+   WEBHOOK_SECRET is whatever you paste into github
+4. docker compose -f docker-compose.prod.yml up -d --build
+5. github repo -> settings -> webhooks -> add
+   https://sagenest.gorb.technology/webhook, content type json, the
+   secret from .env, just the push event
+6. push to main, docker logs -f sagenest-server, watch it go
+
+traefik gets the certs itself, no cert setup. updating sagenest itself is
+git pull and the same compose command again. the server container has the
+docker socket mounted, which means it can do anything on that box, so
+dont run anything else there.

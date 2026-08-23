@@ -1,0 +1,8 @@
+.git
+.env
+server/.venv
+server/target
+server/workspace
+server/__pycache__
+client/node_modules
+client/dist
