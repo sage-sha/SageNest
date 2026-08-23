@@ -18,7 +18,7 @@ async def handle(state: AppState, payload: dict) -> int:
     clone_url = payload["repository"]["clone_url"]
     checkout = builder.clone_repo(clone_url, branch)
     try:
-        image_tag = builder.build_image(checkout / "example-site", commit) # change to: builder.build_image(checkout, commit) after testing locally
+        image_tag = builder.build_image(checkout, commit)
         container_id = runner.start(image_tag)
         next = Deployment(
             commit=commit[:12],
