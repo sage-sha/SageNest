@@ -21,6 +21,8 @@ thing. Point it at your own frontend repo (it just needs a `Dockerfile`).
   on it. start it once with docker compose and forget about it
 - git + github webhooks, github hits the server on every push
 - typescript + vite, the dashboard, little page that shows what's live
+  and the last few deploys, including ones that failed their health check.
+  polls `/api/status` every 5s
 
 ## layout
 
@@ -90,15 +92,29 @@ so none of this is tied to any one project.
 5. `docker build` runs against the root of that checkout — the repo
    needs its own `Dockerfile` there, and that image needs to serve HTTP
    on port `80` inside the container, since that's what traefik routes to.
-6. the new container is started, labeled for traefik, and swapped in as
-   "current" — the previous container is then stopped and removed.
+6. the new container is started and labeled for traefik.
+7. the server polls the new container directly on the docker network
+   until it answers HTTP, up to 30s. traefik also has its own healthcheck
+   on the labels, so it won't route to a backend that isn't answering.
+8. **if it never comes up** — crash on start, or still not serving after
+   30s — the new container is stopped and removed, the failure is
+   recorded, and the old container is left running. the swap just doesn't
+   happen. the webhook returns `500` so the failed delivery is visible in
+   github's UI.
+9. if it does come up, it's swapped in as "current" and the previous
+   container is stopped and removed.
+
+a build that fails outright is handled the same way: nothing was started,
+so the running deployment is untouched.
 
 ## known limitations
 
 - one live deployment at a time — pushing swaps the site, it doesn't run
   previews side by side (no per-branch or per-PR environments yet).
-- no health check before swapping — a broken build/crash-on-start image
-  still replaces the working container, with no automatic rollback.
+- the health check is a plain GET on `/` — it proves the container is
+  serving, not that the app is actually correct.
+- the deploy runs inline in the webhook handler and blocks, so a slow
+  build plus a 30s health timeout holds the request open.
 - `main` is hardcoded as the only deployed branch.
 - old images and stopped containers aren't garbage collected.
 

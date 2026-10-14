@@ -6,7 +6,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 import api
 import webhook
-from state import AppState, Deployment
+from state import AppState
 
 import hashlib
 import hmac
@@ -40,5 +40,5 @@ async def handle(request: Request) -> Response:
 
 
 @app.get("/api/status")
-def status() -> Deployment | None:
+def status() -> dict:
     return api.status(state)
